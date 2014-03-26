@@ -27,6 +27,8 @@ namespace VideoClientApplication
         public MainWindow()
         {
             InitializeComponent();
+            speedRatioSlider.Minimum = 0.0;
+            speedRatioSlider.Maximum = 2.5;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -52,13 +54,13 @@ namespace VideoClientApplication
 
                     myVideoLoaded = true;
                 }
-                    
+
             }
         }
 
         private void Element_MediaOpened(object sender, EventArgs e)
         {
-
+            timelineSlider.Maximum = myMediaElement.NaturalDuration.TimeSpan.TotalMilliseconds;
         }
 
         private void Element_MediaEnded(object sender, EventArgs e)
@@ -66,7 +68,7 @@ namespace VideoClientApplication
             myMediaElement.Stop();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Stop_Click(object sender, RoutedEventArgs e)
         {
             if (myVideoLoaded)
             {
@@ -79,10 +81,68 @@ namespace VideoClientApplication
                 {
                     myMediaElement.Play();
                     myPlayStopButton.Content = "Stop";
+                    timelineSlider.Value = myMediaElement.Position.TotalMilliseconds;
                 }
 
                 myVideoIsPlaying = !myVideoIsPlaying;
             }
         }
+
+        private void Pause_Click(object sender, RoutedEventArgs e)
+        {
+            if (myVideoLoaded)
+            {
+                if (myVideoIsPlaying)
+                {
+                    myMediaElement.Pause();
+                    myPauseButton.Content = "Continue";
+                }
+                else
+                {
+                    myMediaElement.Play();
+                    myPauseButton.Content = "Pause";
+                }
+
+                myVideoIsPlaying = !myVideoIsPlaying;
+            }
+        }
+
+        private void Plus_Click(object sender, RoutedEventArgs e)
+        {
+            if (myVideoLoaded)
+            {
+                if (myVideoIsPlaying)
+                {
+                    myMediaElement.SpeedRatio = myMediaElement.SpeedRatio + 0.1;
+                }
+            }
+        }
+        private void Minus_Click(object sender, RoutedEventArgs e)
+        {
+            if (myVideoLoaded)
+            {
+                if (myVideoIsPlaying)
+                {
+                    myMediaElement.SpeedRatio = myMediaElement.SpeedRatio - 0.1;
+                }
+            }
+        }
+
+        private void ChangeMediaSpeedRatio(object sender, RoutedPropertyChangedEventArgs<double> args)
+        {
+            myMediaElement.SpeedRatio = (double)speedRatioSlider.Value;
+        }
+
+        // Jump to different parts of the media (seek to).  
+        private void SeekToMediaPosition(object sender, RoutedPropertyChangedEventArgs<double> args)
+        {
+            int SliderValue = (int)timelineSlider.Value;
+
+            // Overloaded constructor takes the arguments days, hours, minutes, seconds, miniseconds. 
+            // Create a TimeSpan with miliseconds equal to the slider value.
+            TimeSpan ts = new TimeSpan(0, 0, 0, 0, SliderValue);
+            myMediaElement.Position = ts;
+        }
+
     }
 }
