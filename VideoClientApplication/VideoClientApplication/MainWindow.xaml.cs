@@ -13,9 +13,24 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace VideoClientApplication
 {
+
+    public class Alpha
+    {
+
+        // This method that will be called when the thread is started
+        public void Beta()
+        {
+            while (true)
+            {
+                Console.WriteLine("Alpha.Beta is running in its own thread.");
+            }
+        }
+    };
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -61,6 +76,35 @@ namespace VideoClientApplication
         private void Element_MediaOpened(object sender, EventArgs e)
         {
             timelineSlider.Maximum = myMediaElement.NaturalDuration.TimeSpan.TotalMilliseconds;
+            
+            //creating new thread
+
+            Alpha oAlpha = new Alpha();
+
+            // Create the thread object, passing in the Alpha.Beta method
+            // via a ThreadStart delegate. This does not start the thread.
+            Thread oThread = new Thread(new ThreadStart(oAlpha.Beta));
+
+            // Start the thread
+            oThread.Start();
+
+            // Spin for a while waiting for the started thread to become
+            // alive:
+            while (!oThread.IsAlive) ;
+
+            // Put the Main thread to sleep for 1 millisecond to allow oThread
+            // to do some work:
+            Thread.Sleep(1000);
+
+            // Request that oThread be stopped
+            oThread.Abort();
+
+            // Wait until oThread finishes. Join also has overloads
+            // that take a millisecond interval or a TimeSpan object.
+            oThread.Join();
+
+            Console.WriteLine();
+            Console.WriteLine("Alpha.Beta has finished");
         }
 
         private void Element_MediaEnded(object sender, EventArgs e)
