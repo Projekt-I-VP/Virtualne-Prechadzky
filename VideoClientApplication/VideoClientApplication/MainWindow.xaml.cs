@@ -14,6 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
+using System.Net.Http;
+using System.Net.Http.Headers;
+
 
 namespace VideoClientApplication
 {
@@ -26,10 +29,12 @@ namespace VideoClientApplication
         {
             while (true)
             {
-                // Put the Main thread to sleep for 1 millisecond to allow oThread
-                // to do some work:
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var odpoved = client.GetStringAsync("http://localhost:50435//api/values");
+                Console.WriteLine(odpoved);
                 Thread.Sleep(1000);
-                Console.WriteLine("Alpha.Beta is running in its own thread.");
             }
         }
     };
