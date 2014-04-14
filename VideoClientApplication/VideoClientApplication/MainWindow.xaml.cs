@@ -32,8 +32,8 @@ namespace VideoClientApplication
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var odpoved = client.GetStringAsync("http://localhost:50435//api/values");
-                Console.WriteLine(odpoved);
+                var odpoved = client.GetStringAsync("http://localhost:50435/api/values");
+                Console.WriteLine(odpoved.Result);
                 Thread.Sleep(1000);
             }
         }
